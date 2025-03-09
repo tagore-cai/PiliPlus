@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:PiliPlus/common/widgets/refresh_indicator.dart';
+import 'package:PiliPlus/common/widgets/spring_physics.dart';
 import 'package:PiliPlus/http/loading_state.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide RefreshIndicator;
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:PiliPlus/common/constants.dart';
@@ -67,12 +68,12 @@ class _RcmdPageState extends State<RcmdPage>
       decoration: BoxDecoration(
         borderRadius: StyleString.mdRadius,
       ),
-      child: refreshIndicator(
+      child: RefreshIndicator(
         onRefresh: () async {
           await _controller.onRefresh();
         },
-        child: CustomScrollView(
-          controller: _controller.scrollController,
+        child: (onCancelDrag) => CustomScrollView(
+          controller: CustomScrollController(onCancelDrag),
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverPadding(

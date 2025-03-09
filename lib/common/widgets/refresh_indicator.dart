@@ -12,7 +12,7 @@ Widget refreshIndicator({
   return RefreshIndicator(
     displacement: displacement,
     onRefresh: onRefresh,
-    child: child,
+    child: (onCancelDrag) => child,
   );
 }
 
@@ -188,7 +188,7 @@ class RefreshIndicator extends StatefulWidget {
   /// will appear when child's Scrollable descendant is over-scrolled.
   ///
   /// Typically a [ListView] or [CustomScrollView].
-  final Widget child;
+  final Widget Function(ValueChanged<double> onCancelDrag) child;
 
   /// The distance from the child's top or bottom [edgeOffset] where
   /// the refresh indicator will settle. During the drag that exposes the refresh
@@ -269,6 +269,8 @@ class RefreshIndicator extends StatefulWidget {
   @override
   RefreshIndicatorState createState() => RefreshIndicatorState();
 }
+
+bool isRefreshing = false;
 
 /// Contains the state for a [RefreshIndicator]. This class can be used to
 /// programmatically show the refresh indicator, see the [show] method.
@@ -368,6 +370,8 @@ class RefreshIndicatorState extends State<RefreshIndicator>
         _start(notification.metrics.axisDirection);
   }
 
+  double? containerExtent;
+
   bool _handleScrollNotification(ScrollNotification notification) {
     if (!widget.notificationPredicate(notification)) {
       return false;
@@ -443,6 +447,7 @@ class RefreshIndicatorState extends State<RefreshIndicator>
       return false;
     }
     if (_mode == _RefreshIndicatorMode.drag) {
+      isRefreshing = true;
       notification.disallowIndicator();
       return true;
     }
@@ -470,6 +475,7 @@ class RefreshIndicatorState extends State<RefreshIndicator>
   }
 
   void _checkDragOffset(double containerExtent) {
+    this.containerExtent ??= containerExtent;
     assert(_mode == _RefreshIndicatorMode.drag ||
         _mode == _RefreshIndicatorMode.armed);
     double newValue =
@@ -487,6 +493,7 @@ class RefreshIndicatorState extends State<RefreshIndicator>
 
   // Stop showing the refresh indicator.
   Future<void> _dismiss(_RefreshIndicatorMode newMode) async {
+    isRefreshing = false;
     await Future<void>.value();
     // This can only be called from _show() when refreshing and
     // _handleScrollNotification in response to a ScrollEndNotification or
@@ -579,7 +586,10 @@ class RefreshIndicatorState extends State<RefreshIndicator>
       onNotification: _handleScrollNotification,
       child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: _handleIndicatorNotification,
-        child: widget.child,
+        child: widget.child((delta) {
+          _dragOffset = _dragOffset! + delta;
+          _checkDragOffset(containerExtent!);
+        }),
       ),
     );
     assert(() {

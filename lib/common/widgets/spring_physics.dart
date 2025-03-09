@@ -1,3 +1,4 @@
+import 'package:PiliPlus/common/widgets/refresh_indicator.dart';
 import 'package:PiliPlus/utils/storage.dart';
 import 'package:flutter/material.dart';
 
@@ -51,4 +52,42 @@ class CustomTabBarViewClampingScrollPhysics extends ClampingScrollPhysics {
         stiffness: GStorage.springDescription[1],
         damping: GStorage.springDescription[2],
       );
+}
+
+class CustomScrollPosition extends ScrollPositionWithSingleContext {
+  CustomScrollPosition({
+    required super.physics,
+    required super.context,
+    required this.onCancelDrag,
+  });
+
+  final ValueChanged<double> onCancelDrag;
+
+  @override
+  void applyUserOffset(double delta) {
+    if (isRefreshing && delta < 0) {
+      onCancelDrag(delta);
+      return;
+    }
+    super.applyUserOffset(delta);
+  }
+}
+
+class CustomScrollController extends ScrollController {
+  CustomScrollController(this.onCancelDrag);
+
+  final ValueChanged<double> onCancelDrag;
+
+  @override
+  CustomScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) {
+    return CustomScrollPosition(
+      physics: physics.applyTo(const AlwaysScrollableScrollPhysics()),
+      context: context,
+      onCancelDrag: onCancelDrag,
+    );
+  }
 }
