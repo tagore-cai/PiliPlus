@@ -494,7 +494,7 @@ class Utils {
         dynamic res = await DynamicsHttp.dynamicDetail(id: id);
         if (res['status']) {
           final ctr = Get.find<DynamicsTabController>(tag: 'all');
-          List list = ctr.loadingState.value is Success
+          List<DynamicItemModel> list = ctr.loadingState.value is Success
               ? (ctr.loadingState.value as Success).response
               : <DynamicItemModel>[];
           list.insert(0, res['data']);
@@ -658,7 +658,7 @@ class Utils {
     );
   }
 
-  static void onCopyOrMove({
+  static void onCopyOrMove<T>({
     required BuildContext context,
     required bool isCopy,
     required dynamic ctr,
@@ -728,9 +728,9 @@ class Utils {
                         if (res['status']) {
                           ctr.handleSelect(false);
                           if (isCopy.not) {
-                            List dataList =
+                            List<T> dataList =
                                 (ctr.loadingState.value as Success).response;
-                            List remainList = dataList
+                            List<T> remainList = dataList
                                 .toSet()
                                 .difference(resources.toSet())
                                 .toList();
