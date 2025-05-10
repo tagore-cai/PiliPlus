@@ -13,7 +13,7 @@ import 'package:PiliPlus/models/bangumi/info.dart' as bangumi;
 import 'package:PiliPlus/models/bangumi/info.dart';
 import 'package:PiliPlus/models/common/episode_panel_type.dart';
 import 'package:PiliPlus/models/common/reply/reply_type.dart';
-import 'package:PiliPlus/models/common/search_type.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/video_detail_res.dart' as video;
 import 'package:PiliPlus/pages/danmaku/view.dart';
 import 'package:PiliPlus/pages/episode_panel/view.dart';
@@ -135,7 +135,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
       videoPlayerServiceHandler.onVideoDetailChange(
           value, videoDetailController.cid.value, heroTag);
     });
-    if (videoDetailController.videoType == SearchType.media_bangumi) {
+    if (videoDetailController.videoType == VideoType.pgc) {
       bangumiIntroController = Get.put(BangumiIntroController(), tag: heroTag);
       _listenerLoadingState =
           bangumiIntroController.loadingState.listen((value) {
@@ -269,10 +269,9 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
       if (plPlayerController!.playRepeat != PlayRepeat.pause &&
           plPlayerController!.playRepeat != PlayRepeat.singleCycle) {
         if (videoDetailController.isPlayAll ||
-            videoDetailController.videoType == SearchType.video) {
+            videoDetailController.videoType == VideoType.ugc) {
           notExitFlag = videoIntroController.nextPlay();
-        } else if (videoDetailController.videoType ==
-            SearchType.media_bangumi) {
+        } else if (videoDetailController.videoType == VideoType.pgc) {
           notExitFlag = bangumiIntroController.nextPlay();
         }
       }
@@ -1156,7 +1155,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                         buildTabbar(
                           introText: '相关视频',
                           showIntro: videoDetailController.videoType ==
-                                  SearchType.video &&
+                                  VideoType.ugc &&
                               videoDetailController
                                   .plPlayerController.showRelatedVideo,
                           showReply: videoDetailController.showReply,
@@ -1166,7 +1165,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                             controller: videoDetailController.tabCtr,
                             children: [
                               if (videoDetailController.videoType ==
-                                      SearchType.video &&
+                                      VideoType.ugc &&
                                   videoDetailController
                                       .plPlayerController.showRelatedVideo)
                                 CustomScrollView(
@@ -1242,11 +1241,11 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                 plPlayerController: plPlayerController!,
                 videoDetailController: videoDetailController,
                 videoIntroController:
-                    videoDetailController.videoType == SearchType.video
+                    videoDetailController.videoType == VideoType.ugc
                         ? videoIntroController
                         : null,
                 bangumiIntroController:
-                    videoDetailController.videoType == SearchType.media_bangumi
+                    videoDetailController.videoType == VideoType.pgc
                         ? bangumiIntroController
                         : null,
                 headerControl: HeaderControl(
@@ -1424,13 +1423,13 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                     plPlayerController: plPlayerController!,
                     videoDetailController: videoDetailController,
                     videoIntroController:
-                        videoDetailController.videoType == SearchType.video
+                        videoDetailController.videoType == VideoType.ugc
                             ? videoIntroController
                             : null,
-                    bangumiIntroController: videoDetailController.videoType ==
-                            SearchType.media_bangumi
-                        ? bangumiIntroController
-                        : null,
+                    bangumiIntroController:
+                        videoDetailController.videoType == VideoType.pgc
+                            ? bangumiIntroController
+                            : null,
                     headerControl: HeaderControl(
                       key: videoDetailController.headerCtrKey,
                       controller: videoDetailController.plPlayerController,
@@ -1822,7 +1821,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                   )
                 : null,
             slivers: [
-              if (videoDetailController.videoType == SearchType.video) ...[
+              if (videoDetailController.videoType == VideoType.ugc) ...[
                 VideoIntroPanel(
                   heroTag: heroTag,
                   showAiBottomSheet: showAiBottomSheet,
@@ -1853,8 +1852,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                           StyleString.safeSpace,
                     ),
                   ),
-              ] else if (videoDetailController.videoType ==
-                  SearchType.media_bangumi)
+              ] else if (videoDetailController.videoType == VideoType.pgc)
                 Obx(
                   () => BangumiIntroPanel(
                     heroTag: heroTag,
@@ -1952,13 +1950,13 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                     cid: videoDetailController.cid.value,
                     isReversed:
                         videoIntroController.videoDetail.value.isPageReversed,
-                    changeFucCall: videoDetailController.videoType ==
-                            SearchType.media_bangumi
-                        ? bangumiIntroController.changeSeasonOrbangu
-                        : videoIntroController.changeSeasonOrbangu,
+                    changeFucCall:
+                        videoDetailController.videoType == VideoType.pgc
+                            ? bangumiIntroController.changeSeasonOrbangu
+                            : videoIntroController.changeSeasonOrbangu,
                     showTitle: false,
-                    isSupportReverse: videoDetailController.videoType !=
-                        SearchType.media_bangumi,
+                    isSupportReverse:
+                        videoDetailController.videoType != VideoType.pgc,
                     onReverse: () {
                       onReversePlay(
                         bvid: videoDetailController.bvid,
@@ -2009,13 +2007,13 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                       .ugcSeason!
                       .sections![videoDetailController.seasonIndex.value]
                       .isReversed,
-                  changeFucCall: videoDetailController.videoType ==
-                          SearchType.media_bangumi
-                      ? bangumiIntroController.changeSeasonOrbangu
-                      : videoIntroController.changeSeasonOrbangu,
+                  changeFucCall:
+                      videoDetailController.videoType == VideoType.pgc
+                          ? bangumiIntroController.changeSeasonOrbangu
+                          : videoIntroController.changeSeasonOrbangu,
                   showTitle: false,
-                  isSupportReverse: videoDetailController.videoType !=
-                      SearchType.media_bangumi,
+                  isSupportReverse:
+                      videoDetailController.videoType != VideoType.pgc,
                   onReverse: () {
                     onReversePlay(
                       bvid: videoDetailController.bvid,
@@ -2132,23 +2130,20 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
           cid: cid,
           seasonId: season?.id,
           list: season != null ? season.sections : [episodes],
-          isReversed:
-              videoDetailController.videoType == SearchType.media_bangumi
-                  ? null
-                  : season != null
-                      ? videoIntroController
-                          .videoDetail
-                          .value
-                          .ugcSeason!
-                          .sections![videoDetailController.seasonIndex.value]
-                          .isReversed
-                      : videoIntroController.videoDetail.value.isPageReversed,
-          isSupportReverse:
-              videoDetailController.videoType != SearchType.media_bangumi,
-          changeFucCall:
-              videoDetailController.videoType == SearchType.media_bangumi
-                  ? bangumiIntroController.changeSeasonOrbangu
-                  : videoIntroController.changeSeasonOrbangu,
+          isReversed: videoDetailController.videoType == VideoType.pgc
+              ? null
+              : season != null
+                  ? videoIntroController
+                      .videoDetail
+                      .value
+                      .ugcSeason!
+                      .sections![videoDetailController.seasonIndex.value]
+                      .isReversed
+                  : videoIntroController.videoDetail.value.isPageReversed,
+          isSupportReverse: videoDetailController.videoType != VideoType.pgc,
+          changeFucCall: videoDetailController.videoType == VideoType.pgc
+              ? bangumiIntroController.changeSeasonOrbangu
+              : videoIntroController.changeSeasonOrbangu,
           onClose: Get.back,
           onReverse: () {
             Get.back();

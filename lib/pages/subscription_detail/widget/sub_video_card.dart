@@ -5,7 +5,7 @@ import 'package:PiliPlus/common/widgets/image/network_img_layer.dart';
 import 'package:PiliPlus/common/widgets/stat/stat.dart';
 import 'package:PiliPlus/http/search.dart';
 import 'package:PiliPlus/models/common/badge_type.dart';
-import 'package:PiliPlus/models/common/search_type.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/user/sub_detail.dart';
 import 'package:PiliPlus/utils/page_utils.dart';
 import 'package:PiliPlus/utils/utils.dart';
@@ -34,7 +34,7 @@ class SubVideoCardH extends StatelessWidget {
           arguments: {
             'videoItem': videoItem,
             'heroTag': Utils.makeHeroTag(id),
-            'videoType': SearchType.video,
+            'videoType': VideoType.ugc,
           },
         );
       },

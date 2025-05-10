@@ -76,7 +76,7 @@ class VideoCardH extends StatelessWidget {
                   return;
                 }
                 if (type == 'ketang') {
-                  SmartDialog.showToast('课堂视频暂不支持播放');
+                  PageUtils.viewPugv(seasonId: videoItem.aid);
                   return;
                 } else if (type == 'live_room') {
                   if (videoItem is SearchVideoItemModel) {

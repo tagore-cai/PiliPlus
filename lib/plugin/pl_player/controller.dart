@@ -11,6 +11,7 @@ import 'package:PiliPlus/models/common/account_type.dart';
 import 'package:PiliPlus/models/common/audio_normalization.dart';
 import 'package:PiliPlus/models/common/sponsor_block/segment_type.dart';
 import 'package:PiliPlus/models/common/sponsor_block/skip_type.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/user/danmaku_rule.dart';
 import 'package:PiliPlus/pages/mine/controller.dart';
 import 'package:PiliPlus/plugin/pl_player/models/data_source.dart';
@@ -18,6 +19,7 @@ import 'package:PiliPlus/plugin/pl_player/models/data_status.dart';
 import 'package:PiliPlus/plugin/pl_player/models/fullscreen_mode.dart';
 import 'package:PiliPlus/plugin/pl_player/models/play_repeat.dart';
 import 'package:PiliPlus/plugin/pl_player/models/play_status.dart';
+import 'package:PiliPlus/plugin/pl_player/models/play_type.dart';
 import 'package:PiliPlus/plugin/pl_player/utils/fullscreen.dart';
 import 'package:PiliPlus/services/service_locator.dart';
 import 'package:PiliPlus/utils/extension.dart';
@@ -87,7 +89,7 @@ class PlPlayerController {
   final RxBool _controlsLock = false.obs;
   final RxBool _isFullScreen = false.obs;
   // 默认投稿视频格式
-  static RxString _videoType = 'archive'.obs;
+  PlayType playType = PlayType.video;
 
   final RxString _direction = 'horizontal'.obs;
 
@@ -114,6 +116,7 @@ class PlPlayerController {
   dynamic _epid;
   dynamic _seasonId;
   dynamic _subType;
+  VideoType _videoType = VideoType.ugc;
   int _heartDuration = 0;
 
   late DataSource dataSource;
@@ -235,9 +238,6 @@ class PlPlayerController {
   RxString get direction => _direction;
 
   RxInt get playerCount => _playerCount;
-
-  ///
-  RxString get videoType => _videoType;
 
   /// 弹幕开关
   RxBool isOpenDanmu = false.obs;
@@ -429,7 +429,6 @@ class PlPlayerController {
 
   // 添加一个私有构造函数
   PlPlayerController._() {
-    _videoType = videoType;
     isOpenDanmu.value =
         setting.get(SettingBoxKey.enableShowDanmaku, defaultValue: true);
     danmakuWeight = setting.get(SettingBoxKey.danmakuWeight, defaultValue: 0);
@@ -495,12 +494,13 @@ class PlPlayerController {
 
   // 获取实例 传参
   static PlPlayerController getInstance({
-    String videoType = 'archive',
+    PlayType playType = PlayType.video,
   }) {
     // 如果实例尚未创建，则创建一个新实例
     _instance ??= PlPlayerController._();
-    _instance!._playerCount.value += 1;
-    _videoType.value = videoType;
+    _instance!
+      .._playerCount.value += 1
+      ..playType = playType;
     return _instance!;
   }
 
@@ -529,9 +529,11 @@ class PlPlayerController {
     dynamic epid,
     dynamic seasonId,
     dynamic subType,
+    VideoType? videoType,
     VoidCallback? callback,
   }) async {
     try {
+      _videoType = videoType ?? VideoType.ugc;
       this.dataSource = dataSource;
       this.segmentList.value = segmentList ?? <Segment>[];
       this.viewPointList.value = viewPointList ?? <Segment>[];
@@ -690,8 +692,8 @@ class PlPlayerController {
     }
     int bufferSize =
         setting.get(SettingBoxKey.expandBuffer, defaultValue: false)
-            ? (videoType.value == 'live' ? 64 * 1024 * 1024 : 32 * 1024 * 1024)
-            : (videoType.value == 'live' ? 16 * 1024 * 1024 : 4 * 1024 * 1024);
+            ? (playType.isLive ? 64 * 1024 * 1024 : 32 * 1024 * 1024)
+            : (playType.isLive ? 16 * 1024 * 1024 : 4 * 1024 * 1024);
     Player player = _videoPlayerController ??
         Player(
           configuration: PlayerConfiguration(
@@ -828,7 +830,7 @@ class PlPlayerController {
   Future<void> _initializePlayer() async {
     if (_instance == null) return;
     // 设置倍速
-    if (videoType.value == 'live') {
+    if (playType.isLive) {
       await setPlaybackSpeed(1.0);
     } else {
       if (_videoPlayerController?.state.rate != _playbackSpeed.value) {
@@ -887,7 +889,7 @@ class PlPlayerController {
         videoPlayerServiceHandler.onStatusChange(
           playerStatus.status.value,
           isBuffering.value,
-          videoType.value == 'live',
+          playType.isLive,
         );
 
         /// 触发回调事件
@@ -937,7 +939,7 @@ class PlPlayerController {
         videoPlayerServiceHandler.onStatusChange(
           playerStatus.status.value,
           event,
-          videoType.value == 'live',
+          playType.isLive,
         );
       }),
       // videoPlayerController!.stream.log.listen((event) {
@@ -947,7 +949,7 @@ class PlPlayerController {
       // }),
       videoPlayerController!.stream.error.listen((String event) {
         // 直播的错误提示没有参考价值，均不予显示
-        if (videoType.value == 'live') return;
+        if (playType.isLive) return;
         if (event.startsWith("Failed to open https://") ||
             event.startsWith("Can not open external file https://") ||
             //tcp: ffurl_read returned 0xdfb9b0bb
@@ -998,7 +1000,7 @@ class PlPlayerController {
         videoPlayerServiceHandler.onStatusChange(
           event,
           isBuffering.value,
-          videoType.value == 'live',
+          playType.isLive,
         );
       }),
       onPositionChanged.listen((Duration event) {
@@ -1315,7 +1317,7 @@ class PlPlayerController {
 
   /// 设置长按倍速状态 live模式下禁用
   Future<void> setLongPressStatus(bool val) async {
-    if (videoType.value == 'live') {
+    if (playType.isLive) {
       return;
     }
     if (controlsLock.value) {
@@ -1437,6 +1439,7 @@ class PlPlayerController {
     dynamic epid,
     dynamic seasonId,
     dynamic subType,
+    VideoType? videoType,
   }) async {
     if (!enableHeart || MineController.anonymity.value || progress == 0) {
       return;
@@ -1445,7 +1448,7 @@ class PlPlayerController {
         return;
       }
     }
-    if (videoType.value == 'live') {
+    if (playType.isLive) {
       return;
     }
     bool isComplete = playerStatus.status.value == PlayerStatus.completed ||
@@ -1463,6 +1466,7 @@ class PlPlayerController {
         epid: epid ?? _epid,
         seasonId: seasonId ?? _seasonId,
         subType: subType ?? _subType,
+        videoType: videoType ?? _videoType,
       );
       return;
     }

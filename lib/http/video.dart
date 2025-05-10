@@ -9,6 +9,7 @@ import 'package:PiliPlus/http/login.dart';
 import 'package:PiliPlus/models/bangumi/pgc_rank/pgc_rank_item_model.dart';
 import 'package:PiliPlus/models/common/account_type.dart';
 import 'package:PiliPlus/models/common/reply/reply_type.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/home/rcmd/result.dart';
 import 'package:PiliPlus/models/member/article.dart';
 import 'package:PiliPlus/models/model_hot_video_item.dart';
@@ -181,6 +182,7 @@ class VideoHttp {
     dynamic epid,
     dynamic seasonId,
     bool? forcePgcApi,
+    bool? pugvApi,
   }) async {
     final params = await WbiSign.makSign({
       if (avid != null) 'avid': avid,
@@ -208,13 +210,19 @@ class VideoHttp {
 
     try {
       var res = await Request().get(
-        epid != null && usePgcApi ? Api.bangumiVideoUrl : Api.videoUrl,
+        pugvApi == true
+            ? Api.pugvVideoUrl
+            : epid != null && usePgcApi
+                ? Api.pgcVideoUrl
+                : Api.videoUrl,
         queryParameters: params,
       );
 
       if (res.data['code'] == 0) {
         late PlayUrlModel data;
-        if (epid != null && usePgcApi) {
+        if (pugvApi == true) {
+          data = PlayUrlModel.fromJson(res.data['data']);
+        } else if (epid != null && usePgcApi) {
           data = PlayUrlModel.fromJson(res.data['result']['video_info'])
             ..lastPlayTime = res.data['result']['play_view_business_info']
                 ['user_status']['watch_progress']['current_watch_progress'];
@@ -244,7 +252,7 @@ class VideoHttp {
         };
       }
     } catch (err) {
-      return {'status': false, 'msg': err};
+      return {'status': false, 'msg': err.toString()};
     }
   }
 
@@ -768,13 +776,14 @@ class VideoHttp {
     epid,
     seasonId,
     subType,
+    VideoType videoType = VideoType.ugc,
   }) async {
     await Request().post(Api.heartBeat, queryParameters: {
       'bvid': bvid,
       'cid': cid,
       if (epid != null) 'epid': epid,
       if (seasonId != null) 'sid': seasonId,
-      if (epid != null) 'type': 4,
+      'type': videoType.type,
       if (subType != null) 'sub_type': subType,
       'played_time': progress,
       'csrf': Accounts.main.csrf,

@@ -11,6 +11,7 @@ import 'package:PiliPlus/models/live/live_room/room_info_h5.dart';
 import 'package:PiliPlus/pages/mine/controller.dart';
 import 'package:PiliPlus/plugin/pl_player/controller.dart';
 import 'package:PiliPlus/plugin/pl_player/models/data_source.dart';
+import 'package:PiliPlus/plugin/pl_player/models/play_type.dart';
 import 'package:PiliPlus/services/service_locator.dart';
 import 'package:PiliPlus/tcp/live.dart';
 import 'package:PiliPlus/utils/danmaku_utils.dart';
@@ -31,7 +32,7 @@ class LiveRoomController extends GetxController {
   // 静音状态
   RxBool volumeOff = false.obs;
   PlPlayerController plPlayerController =
-      PlPlayerController.getInstance(videoType: 'live');
+      PlPlayerController.getInstance(playType: PlayType.live);
   Rx<RoomInfoH5Model?> roomInfoH5 = Rx<RoomInfoH5Model?>(null);
 
   RxList<dynamic> messages = [].obs;

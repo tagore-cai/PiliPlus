@@ -8,6 +8,7 @@ import 'package:PiliPlus/models/common/search_type.dart';
 import 'package:PiliPlus/models/search/result.dart';
 import 'package:PiliPlus/models/search/search_trending/trending_data.dart';
 import 'package:PiliPlus/models/search/suggest.dart';
+import 'package:PiliPlus/models/video/pugv_info/data.dart';
 import 'package:PiliPlus/utils/extension.dart';
 import 'package:PiliPlus/utils/storage.dart';
 import 'package:flutter/material.dart';
@@ -212,19 +213,38 @@ class SearchHttp {
     dynamic seasonId,
     dynamic epId,
   }) async {
-    final Map<String, dynamic> data = {};
-    if (seasonId != null) {
-      data['season_id'] = seasonId;
-    } else if (epId != null) {
-      data['ep_id'] = epId;
-    }
-    final dynamic res =
-        await Request().get(Api.bangumiInfo, queryParameters: data);
-
+    final dynamic res = await Request().get(
+      Api.bangumiInfo,
+      queryParameters: {
+        if (seasonId != null) 'season_id': seasonId,
+        if (epId != null) 'ep_id': epId,
+      },
+    );
     if (res.data['code'] == 0) {
       return {
         'status': true,
         'data': BangumiInfoModel.fromJson(res.data['result']),
+      };
+    } else {
+      return {'status': false, 'msg': res.data['message']};
+    }
+  }
+
+  static Future pugvInfo({
+    dynamic seasonId,
+    dynamic epId,
+  }) async {
+    final dynamic res = await Request().get(
+      Api.pugvInfo,
+      queryParameters: {
+        if (seasonId != null) 'season_id': seasonId,
+        if (epId != null) 'ep_id': epId,
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {
+        'status': true,
+        'data': PugvInfoData.fromJson(res.data['data']),
       };
     } else {
       return {'status': false, 'msg': res.data['message']};

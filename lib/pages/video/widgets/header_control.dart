@@ -4,12 +4,12 @@ import 'dart:math';
 
 import 'package:PiliPlus/common/widgets/button/icon_button.dart';
 import 'package:PiliPlus/common/widgets/self_sized_horizontal_list.dart';
-import 'package:PiliPlus/models/common/search_type.dart';
 import 'package:PiliPlus/models/common/super_resolution_type.dart';
 import 'package:PiliPlus/models/common/video/audio_quality.dart';
 import 'package:PiliPlus/models/common/video/cdn_type.dart';
 import 'package:PiliPlus/models/common/video/video_decode_type.dart';
 import 'package:PiliPlus/models/common/video/video_quality.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/video/play/url.dart';
 import 'package:PiliPlus/pages/setting/widgets/select_dialog.dart';
 import 'package:PiliPlus/pages/setting/widgets/switch_item.dart';
@@ -87,7 +87,7 @@ class HeaderControlState extends State<HeaderControl> {
   void initState() {
     super.initState();
     videoIntroController = Get.find<VideoIntroController>(tag: heroTag);
-    if (videoDetailCtr.videoType != SearchType.video) {
+    if (videoDetailCtr.videoType == VideoType.pgc) {
       bangumiIntroController = Get.find<BangumiIntroController>(tag: heroTag);
     }
     horizontalScreen =
@@ -2241,7 +2241,7 @@ class HeaderControlState extends State<HeaderControl> {
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (videoDetailCtr.videoType == SearchType.video) ...[
+                        if (videoDetailCtr.videoType == VideoType.ugc) ...[
                           SizedBox(
                             width: 42,
                             height: 34,

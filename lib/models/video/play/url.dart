@@ -171,21 +171,21 @@ class VideoItem {
 
   VideoItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    baseUrl = json['baseUrl'];
-    var backupUrls = json['backupUrl']?.toList() ?? [];
+    baseUrl = json['baseUrl'] ?? json['base_url'];
+    var backupUrls = json['backupUrl']?.toList() ?? json['backup_url'] ?? [];
     backupUrl = backupUrls.isNotEmpty
         ? backupUrls.firstWhere((i) => !_isMCDNorPCDN(i),
             orElse: () => backupUrls.first)
         : '';
-    bandWidth = json['bandWidth'];
+    bandWidth = json['bandWidth'] ?? json['bandwidth'];
     mimeType = json['mime_type'];
     codecs = json['codecs'];
     width = json['width'];
     height = json['height'];
-    frameRate = json['frameRate'];
+    frameRate = json['frameRate'] ?? json['frame_rate'];
     sar = json['sar'];
-    startWithSap = json['startWithSap'];
-    segmentBase = json['segmentBase'];
+    startWithSap = json['startWithSap'] ?? json['start_with_sap'];
+    segmentBase = json['segmentBase'] ?? json['segment_base'];
     codecid = json['codecid'];
     quality = VideoQuality.values.firstWhere((i) => i.code == json['id']);
   }
@@ -245,21 +245,21 @@ class AudioItem {
 
   AudioItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    baseUrl = json['baseUrl'];
-    var backupUrls = json['backupUrl']?.toList() ?? [];
+    baseUrl = json['baseUrl'] ?? json['base_url'];
+    var backupUrls = json['backupUrl']?.toList() ?? json['backup_url'] ?? [];
     backupUrl = backupUrls.isNotEmpty
         ? backupUrls.firstWhere((i) => !_isMCDNorPCDN(i),
             orElse: () => backupUrls.first)
         : '';
-    bandWidth = json['bandWidth'];
+    bandWidth = json['bandWidth'] ?? json['bandwidth'];
     mimeType = json['mime_type'];
     codecs = json['codecs'];
     width = json['width'];
     height = json['height'];
-    frameRate = json['frameRate'];
+    frameRate = json['frameRate'] ?? json['frame_rate'];
     sar = json['sar'];
-    startWithSap = json['startWithSap'];
-    segmentBase = json['segmentBase'];
+    startWithSap = json['startWithSap'] ?? json['start_with_sap'];
+    segmentBase = json['segmentBase'] ?? json['segment_base'];
     codecid = json['codecid'];
     quality =
         AudioQuality.values.firstWhere((i) => i.code == json['id']).description;

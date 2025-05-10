@@ -8,6 +8,7 @@ import 'package:PiliPlus/http/member.dart';
 import 'package:PiliPlus/http/search.dart';
 import 'package:PiliPlus/http/user.dart';
 import 'package:PiliPlus/http/video.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/user/fav_folder.dart';
 import 'package:PiliPlus/models/video/ai.dart';
 import 'package:PiliPlus/models/video_detail_res.dart';
@@ -33,6 +34,8 @@ import 'package:get/get.dart';
 class VideoIntroController extends GetxController {
   // 视频bvid
   late String bvid;
+
+  final VideoType videoType = Get.arguments?['videoType'] ?? VideoType.ugc;
 
   // 是否预渲染 骨架屏
   bool preRender = false;
@@ -136,6 +139,9 @@ class VideoIntroController extends GetxController {
 
   // 获取视频简介&分p
   Future<void> queryVideoIntro() async {
+    if (videoType == VideoType.pugv) {
+      return;
+    }
     queryVideoTags();
     var result = await VideoHttp.videoIntro(bvid: bvid);
     if (result['status']) {

@@ -16,6 +16,7 @@ import 'package:PiliPlus/plugin/pl_player/models/bottom_control_type.dart';
 import 'package:PiliPlus/plugin/pl_player/models/bottom_progress_behavior.dart';
 import 'package:PiliPlus/plugin/pl_player/models/duration.dart';
 import 'package:PiliPlus/plugin/pl_player/models/fullscreen_mode.dart';
+import 'package:PiliPlus/plugin/pl_player/models/play_type.dart';
 import 'package:PiliPlus/plugin/pl_player/utils.dart';
 import 'package:PiliPlus/plugin/pl_player/widgets/app_bar_ani.dart';
 import 'package:PiliPlus/plugin/pl_player/widgets/backward_seek.dart';
@@ -827,7 +828,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
 
               if (_gestureType == 'horizontal') {
                 // live模式下禁用
-                if (plPlayerController.videoType.value == 'live') return;
+                if (plPlayerController.playType.isLive) return;
 
                 final int curSliderPosition =
                     plPlayerController.sliderPosition.value.inMilliseconds;
@@ -1057,7 +1058,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               if (plPlayerController.controlsLock.value) {
                 return;
               }
-              if (plPlayerController.videoType.value == 'live') {
+              if (plPlayerController.playType.isLive) {
                 doubleTapFuc('center');
                 return;
               }
@@ -1391,7 +1392,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               return const SizedBox.shrink();
             }
 
-            if (plPlayerController.videoType.value == 'live') {
+            if (plPlayerController.playType.isLive) {
               return const SizedBox.shrink();
             }
             if (value > max || max <= 0) {
@@ -1510,8 +1511,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         SafeArea(
           child: Obx(
             () => Visibility(
-              visible:
-                  plPlayerController.videoType.value != 'live' && isFullScreen,
+              visible: !plPlayerController.playType.isLive && isFullScreen,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: FractionalTranslation(

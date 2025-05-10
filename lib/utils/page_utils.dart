@@ -6,9 +6,10 @@ import 'package:PiliPlus/http/dynamics.dart';
 import 'package:PiliPlus/http/search.dart';
 import 'package:PiliPlus/models/bangumi/info.dart';
 import 'package:PiliPlus/models/common/image_preview_type.dart';
-import 'package:PiliPlus/models/common/search_type.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/dynamics/result.dart';
 import 'package:PiliPlus/models/live/live_room/item.dart';
+import 'package:PiliPlus/models/video/pugv_info/data.dart';
 import 'package:PiliPlus/pages/contact/view.dart';
 import 'package:PiliPlus/pages/fav_panel/view.dart';
 import 'package:PiliPlus/pages/share/view.dart';
@@ -687,8 +688,11 @@ class PageUtils {
     return false;
   }
 
-  static Future<void> viewBangumi(
-      {dynamic seasonId, dynamic epId, dynamic progress}) async {
+  static Future<void> viewBangumi({
+    dynamic seasonId,
+    dynamic epId,
+    dynamic progress,
+  }) async {
     try {
       SmartDialog.showLoading(msg: '资源获取中');
       var result = await SearchHttp.bangumiInfo(seasonId: seasonId, epId: epId);
@@ -719,7 +723,7 @@ class PageUtils {
                         'pgcApi': true,
                         'pic': item.cover,
                         'heroTag': Utils.makeHeroTag(item.cid),
-                        'videoType': SearchType.video,
+                        'videoType': VideoType.ugc,
                         if (progress != null) 'progress': int.tryParse(progress)
                       },
                       preventDuplicates: false,
@@ -748,7 +752,7 @@ class PageUtils {
           arguments: {
             'pic': episode.cover,
             'heroTag': Utils.makeHeroTag(episode.cid),
-            'videoType': SearchType.media_bangumi,
+            'videoType': VideoType.pgc,
             'bangumiItem': data,
             if (progress != null) 'progress': int.tryParse(progress)
           },
@@ -784,6 +788,37 @@ class PageUtils {
         parameters: parameters,
         preventDuplicates: false,
       );
+    }
+  }
+
+  static Future<void> viewPugv({seasonId, epId}) async {
+    try {
+      SmartDialog.showLoading(msg: '资源获取中');
+      var res = await SearchHttp.pugvInfo(seasonId: seasonId, epId: epId);
+      SmartDialog.dismiss();
+      if (res['status']) {
+        PugvInfoData data = res['data'];
+        if (data.episodes?.isNotEmpty == true) {
+          final item = data.episodes!.first;
+          toVideoPage(
+            'bvid=${IdUtils.av2bv(item.aid!)}&cid=${item.cid}&seasonId=${data.seasonId}&epId=${item.id}',
+            arguments: {
+              'pugvApi': true,
+              'pic': item.cover,
+              'heroTag': Utils.makeHeroTag(item.cid),
+              'videoType': VideoType.pugv,
+            },
+            preventDuplicates: false,
+          );
+        } else {
+          SmartDialog.showToast('NULL');
+        }
+      } else {
+        SmartDialog.showToast(res['msg']);
+      }
+    } catch (e) {
+      SmartDialog.dismiss();
+      SmartDialog.showToast(e.toString());
     }
   }
 }

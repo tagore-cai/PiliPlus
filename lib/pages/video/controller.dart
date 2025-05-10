@@ -11,7 +11,6 @@ import 'package:PiliPlus/http/loading_state.dart';
 import 'package:PiliPlus/http/user.dart';
 import 'package:PiliPlus/http/video.dart';
 import 'package:PiliPlus/main.dart';
-import 'package:PiliPlus/models/common/search_type.dart';
 import 'package:PiliPlus/models/common/sponsor_block/action_type.dart';
 import 'package:PiliPlus/models/common/sponsor_block/post_segment_model.dart';
 import 'package:PiliPlus/models/common/sponsor_block/segment_model.dart';
@@ -20,6 +19,7 @@ import 'package:PiliPlus/models/common/sponsor_block/skip_type.dart';
 import 'package:PiliPlus/models/common/video/audio_quality.dart';
 import 'package:PiliPlus/models/common/video/video_decode_type.dart';
 import 'package:PiliPlus/models/common/video/video_quality.dart';
+import 'package:PiliPlus/models/common/video/video_type.dart';
 import 'package:PiliPlus/models/video/later.dart';
 import 'package:PiliPlus/models/video/play/url.dart';
 import 'package:PiliPlus/models/video_detail_res.dart';
@@ -62,7 +62,7 @@ class VideoDetailController extends GetxController
   // 视频详情
   RxMap videoItem = {}.obs;
   // 视频类型 默认投稿视频
-  SearchType videoType = Get.arguments['videoType'] ?? SearchType.video;
+  VideoType videoType = Get.arguments['videoType'] ?? VideoType.ugc;
 
   /// tabs相关配置
   late TabController tabCtr;
@@ -105,7 +105,7 @@ class VideoDetailController extends GetxController
   late String cacheDecode;
   late String cacheSecondDecode;
 
-  bool get showReply => videoType == SearchType.video
+  bool get showReply => videoType == VideoType.ugc
       ? plPlayerController.showVideoReply
       : plPlayerController.showBangumiReply;
 
@@ -1087,9 +1087,10 @@ class VideoDetailController extends GetxController
       bvid: bvid,
       cid: cid.value,
       autoplay: autoplay ?? autoPlay.value,
-      epid: videoType == SearchType.media_bangumi ? epId : null,
-      seasonId: videoType == SearchType.media_bangumi ? seasonId : null,
-      subType: videoType == SearchType.media_bangumi ? subType : null,
+      epid: videoType == VideoType.ugc ? null : epId,
+      seasonId: videoType == VideoType.ugc ? null : seasonId,
+      subType: videoType == VideoType.ugc ? null : subType,
+      videoType: videoType,
       callback: () {
         if (videoState.value is! Success) {
           videoState.value = LoadingState.success(null);
@@ -1140,7 +1141,8 @@ class VideoDetailController extends GetxController
       bvid: bvid,
       epid: epId,
       seasonId: seasonId,
-      forcePgcApi: Get.arguments?['pgcApi'] ?? false,
+      forcePgcApi: Get.arguments?['pgcApi'],
+      pugvApi: Get.arguments?['pugvApi'],
     );
     if (result['status']) {
       data = result['data'];
@@ -1285,8 +1287,10 @@ class VideoDetailController extends GetxController
         this.defaultST = Duration(milliseconds: Get.arguments['progress']);
         Get.arguments['progress'] = null;
       } else {
-        this.defaultST =
-            defaultST ?? Duration(milliseconds: data.lastPlayTime!);
+        this.defaultST = defaultST ??
+            (data.lastPlayTime != null
+                ? Duration(milliseconds: data.lastPlayTime!)
+                : Duration.zero);
       }
       if (autoPlay.value) {
         isShowCover.value = false;
@@ -1532,9 +1536,10 @@ class VideoDetailController extends GetxController
           isManual: true,
           bvid: bvid,
           cid: cid.value,
-          epid: videoType == SearchType.media_bangumi ? epId : null,
-          seasonId: videoType == SearchType.media_bangumi ? seasonId : null,
-          subType: videoType == SearchType.media_bangumi ? subType : null,
+          epid: videoType == VideoType.ugc ? null : epId,
+          seasonId: videoType == VideoType.ugc ? null : seasonId,
+          subType: videoType == VideoType.ugc ? null : subType,
+          videoType: videoType,
         );
       } catch (_) {}
     }
