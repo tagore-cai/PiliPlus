@@ -1571,11 +1571,11 @@ class PlPlayerController {
         var pp = _videoPlayerController!.platform as NativePlayer;
         await pp.setProperty('audio-files', '');
         removeListeners();
-        await _videoPlayerController!.dispose();
-        _videoPlayerController = null;
-      }
-      _instance = null;
-      videoPlayerServiceHandler.clear();
+      await _videoPlayerController!.dispose();
+      _videoPlayerController = null;
+    }
+    _instance = null;
+    videoPlayerServiceHandler.clear();
     } catch (err) {
       debugPrint(err.toString());
     }
@@ -1639,6 +1639,23 @@ class PlPlayerController {
 
   late final RxList<double> dmTrend = <double>[].obs;
   late final RxBool showDmTreandChart = true.obs;
+
+  // 双击检测变量
+  DateTime? _lastSelectKeyPressTime;
+  static const Duration _doubleTapThreshold = Duration(milliseconds: 300);
+  Timer? singleTapTimer;
+
+  // 添加双击检测方法
+  bool isDoubleTap() {
+    final now = DateTime.now();
+    if (_lastSelectKeyPressTime != null &&
+        now.difference(_lastSelectKeyPressTime!) <= _doubleTapThreshold) {
+      _lastSelectKeyPressTime = null; // 重置
+      return true;
+    }
+    _lastSelectKeyPressTime = now;
+    return false;
+  }
 }
 
 extension BoxFitExt on BoxFit {

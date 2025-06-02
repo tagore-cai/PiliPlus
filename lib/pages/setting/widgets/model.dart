@@ -2571,7 +2571,7 @@ List<SettingsModel> get extraSettings => [
         defaultVal: true,
         onChanged: (val) {
           if (val) {
-            Utils.checkUpdate(false);
+            // Utils.checkUpdate(false);
           }
         },
       ),

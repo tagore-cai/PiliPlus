@@ -39,7 +39,7 @@ class MainController extends GetxController {
   void onInit() {
     super.onInit();
     if (GStorage.autoUpdate) {
-      Utils.checkUpdate();
+      // Utils.checkUpdate();
     }
 
     setNavBarConfig();

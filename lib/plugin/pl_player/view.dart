@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:PiliPlus/common/constants.dart';
+import 'package:flutter/services.dart';
 import 'package:PiliPlus/common/widgets/progress_bar/audio_video_progress_bar.dart';
 import 'package:PiliPlus/common/widgets/progress_bar/segment_progress_bar.dart';
 import 'package:PiliPlus/models/common/super_resolution_type.dart';
@@ -409,30 +410,30 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               height: 30,
               margin: const EdgeInsets.symmetric(horizontal: 10),
               alignment: Alignment.center,
-              child: PopupMenuButton<SuperResolutionType>(
-                initialValue: SuperResolutionType
-                    .values[plPlayerController.superResolutionType],
-                color: Colors.black.withValues(alpha: 0.8),
-                itemBuilder: (BuildContext context) {
-                  return SuperResolutionType.values
-                      .map((SuperResolutionType type) {
-                    return PopupMenuItem<SuperResolutionType>(
-                      height: 35,
-                      padding: const EdgeInsets.only(left: 30),
-                      value: type,
-                      onTap: () => plPlayerController.setShader(type.index),
-                      child: Text(
-                        type.title,
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 13),
-                      ),
-                    );
-                  }).toList();
-                },
-                child: Text(
-                  SuperResolutionType
-                      .values[plPlayerController.superResolutionType].title,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                child: PopupMenuButton<SuperResolutionType>(
+                  initialValue: SuperResolutionType
+                      .values[plPlayerController.superResolutionType],
+                  color: Colors.black.withValues(alpha: 0.8),
+                  itemBuilder: (BuildContext context) {
+                    return SuperResolutionType.values
+                        .map((SuperResolutionType type) {
+                      return PopupMenuItem<SuperResolutionType>(
+                        height: 35,
+                        padding: const EdgeInsets.only(left: 30),
+                        value: type,
+                        onTap: () => plPlayerController.setShader(type.index),
+                        child: Text(
+                          type.title,
+                          style:
+                              const TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                      );
+                    }).toList();
+                  },
+                  child: Text(
+                    SuperResolutionType
+                        .values[plPlayerController.superResolutionType].title,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ),
             )
@@ -528,26 +529,26 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         height: 30,
         margin: const EdgeInsets.symmetric(horizontal: 10),
         alignment: Alignment.center,
-        child: PopupMenuButton<BoxFit>(
-          initialValue: plPlayerController.videoFit.value,
-          color: Colors.black.withValues(alpha: 0.8),
-          itemBuilder: (BuildContext context) {
-            return BoxFit.values.map((BoxFit boxFit) {
-              return PopupMenuItem<BoxFit>(
-                height: 35,
-                padding: const EdgeInsets.only(left: 30),
-                value: boxFit,
-                onTap: () => plPlayerController.toggleVideoFit(boxFit),
-                child: Text(
-                  boxFit.desc,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
-                ),
-              );
-            }).toList();
-          },
-          child: Text(
-            plPlayerController.videoFit.value.desc,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
+          child: PopupMenuButton<BoxFit>(
+            initialValue: plPlayerController.videoFit.value,
+            color: Colors.black.withValues(alpha: 0.8),
+            itemBuilder: (BuildContext context) {
+              return BoxFit.values.map((BoxFit boxFit) {
+                return PopupMenuItem<BoxFit>(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 30),
+                  value: boxFit,
+                  onTap: () => plPlayerController.toggleVideoFit(boxFit),
+                  child: Text(
+                    boxFit.desc,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                );
+              }).toList();
+            },
+            child: Text(
+              plPlayerController.videoFit.value.desc,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
           ),
         ),
       ),
@@ -559,47 +560,47 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
             : SizedBox(
                 width: widgetWidth,
                 height: 30,
-                child: PopupMenuButton<int>(
-                  initialValue: widget
-                      .videoDetailController!.vttSubtitlesIndex.value
-                      .clamp(0, widget.videoDetailController!.subtitles.length),
-                  color: Colors.black.withValues(alpha: 0.8),
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<int>(
-                        value: 0,
-                        onTap: () =>
-                            widget.videoDetailController!.setSubtitle(0),
-                        child: const Text(
-                          "关闭字幕",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      ...widget.videoDetailController!.subtitles.indexed
-                          .map((e) {
-                        return PopupMenuItem<int>(
-                          value: e.$1 + 1,
-                          onTap: () => widget.videoDetailController!
-                              .setSubtitle(e.$1 + 1),
-                          child: Text(
-                            "${e.$2.lanDoc}",
-                            style: const TextStyle(color: Colors.white),
+                  child: PopupMenuButton<int>(
+                    initialValue: widget
+                        .videoDetailController!.vttSubtitlesIndex.value
+                        .clamp(0, widget.videoDetailController!.subtitles.length),
+                    color: Colors.black.withValues(alpha: 0.8),
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem<int>(
+                          value: 0,
+                          onTap: () =>
+                              widget.videoDetailController!.setSubtitle(0),
+                          child: const Text(
+                            "关闭字幕",
+                            style: TextStyle(color: Colors.white),
                           ),
-                        );
-                      })
-                    ];
-                  },
-                  child: Container(
-                    width: 35,
-                    height: 30,
-                    alignment: Alignment.center,
-                    child: Icon(
-                      widget.videoDetailController!.vttSubtitlesIndex.value == 0
-                          ? Icons.closed_caption_off_outlined
-                          : Icons.closed_caption_off_rounded,
-                      size: 22,
-                      color: Colors.white,
-                      semanticLabel: '字幕',
+                        ),
+                        ...widget.videoDetailController!.subtitles.indexed
+                            .map((e) {
+                          return PopupMenuItem<int>(
+                            value: e.$1 + 1,
+                            onTap: () => widget.videoDetailController!
+                                .setSubtitle(e.$1 + 1),
+                            child: Text(
+                              "${e.$2.lanDoc}",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          );
+                        })
+                      ];
+                    },
+                    child: Container(
+                      width: 35,
+                      height: 30,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        widget.videoDetailController!.vttSubtitlesIndex.value == 0
+                            ? Icons.closed_caption_off_outlined
+                            : Icons.closed_caption_off_rounded,
+                        size: 22,
+                        color: Colors.white,
+                        semanticLabel: '字幕',
                     ),
                   ),
                 ),
@@ -613,26 +614,26 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
           margin: const EdgeInsets.symmetric(horizontal: 10),
           alignment: Alignment.center,
           child: PopupMenuButton<double>(
-            initialValue: plPlayerController.playbackSpeed,
-            color: Colors.black.withValues(alpha: 0.8),
-            itemBuilder: (BuildContext context) {
-              return plPlayerController.speedList.map((double speed) {
-                return PopupMenuItem<double>(
-                  height: 35,
-                  padding: const EdgeInsets.only(left: 30),
-                  value: speed,
-                  onTap: () => plPlayerController.setPlaybackSpeed(speed),
-                  child: Text(
-                    "${speed}X",
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    semanticsLabel: "$speed倍速",
-                  ),
-                );
-              }).toList();
-            },
-            child: Text("${plPlayerController.playbackSpeed}X",
-                style: const TextStyle(color: Colors.white, fontSize: 13),
-                semanticsLabel: "${plPlayerController.playbackSpeed}倍速"),
+              initialValue: plPlayerController.playbackSpeed,
+              color: Colors.black.withValues(alpha: 0.8),
+              itemBuilder: (BuildContext context) {
+                return plPlayerController.speedList.map((double speed) {
+                  return PopupMenuItem<double>(
+                    height: 35,
+                    padding: const EdgeInsets.only(left: 30),
+                    value: speed,
+                    onTap: () => plPlayerController.setPlaybackSpeed(speed),
+                    child: Text(
+                      "${speed}X",
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      semanticsLabel: "$speed倍速",
+                    ),
+                  );
+                }).toList();
+              },
+              child: Text("${plPlayerController.playbackSpeed}X",
+                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  semanticsLabel: "${plPlayerController.playbackSpeed}倍速"),
           ),
         ),
       ),
@@ -706,8 +707,52 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
   bool get isFullScreen => plPlayerController.isFullScreen.value;
 
   late final transformationController = TransformationController();
-
-  @override
+// 添加键盘事件处理方法
+  KeyEventResult _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.select:
+        case LogicalKeyboardKey.enter:
+        case LogicalKeyboardKey.space:
+        // 检查是否为双击
+          if (plPlayerController.isDoubleTap()) {
+            // 双击：取消之前的单击定时器并切换全屏
+            plPlayerController.singleTapTimer?.cancel();
+            plPlayerController.triggerFullScreen(status: !plPlayerController.isFullScreen.value);
+            return KeyEventResult.handled;
+          }
+              
+          // 第一次点击：取消之前的定时器，设置新的延时执行单击操作
+          plPlayerController.singleTapTimer?.cancel();
+          plPlayerController.singleTapTimer = Timer(const Duration(milliseconds: 300), () {
+            // 单击：播放/暂停
+            if (plPlayerController.videoPlayerController!.state.completed) {
+              plPlayerController.videoPlayerController!.seek(Duration.zero);
+              plPlayerController.videoPlayerController!.play();
+            } else {
+              plPlayerController.videoPlayerController!.playOrPause();
+            }
+          });
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowUp:
+          // 显示/隐藏控制栏
+          plPlayerController.controls = !plPlayerController.showControls.value;
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowDown:
+          // 显示/隐藏控制栏
+          plPlayerController.controls = !plPlayerController.showControls.value;
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.escape:
+        case LogicalKeyboardKey.goBack:
+          // 退出全屏
+          if (plPlayerController.isFullScreen.value) {
+            plPlayerController.triggerFullScreen(status: false);
+          }
+          return KeyEventResult.handled;
+        }
+    }
+    return KeyEventResult.ignored;
+  }
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final Color primary = theme.colorScheme.primary;
@@ -715,10 +760,15 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
       color: Colors.white,
       fontSize: 12,
     );
-    return Stack(
-      fit: StackFit.passthrough,
-      key: _playerKey,
-      children: <Widget>[
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        return _handleKeyEvent(event);
+      },
+      child: Stack(
+        fit: StackFit.passthrough,
+        key: _playerKey,
+        children: <Widget>[
         Obx(
           () => Video(
             fill: widget.fill ?? Colors.black,
@@ -1735,6 +1785,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               : const SizedBox.shrink(),
         ),
       ],
+    ),
     );
   }
 }
