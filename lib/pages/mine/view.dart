@@ -107,131 +107,134 @@ class _MinePageState extends State<MinePage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
+        InkWell(
           onTap: _mineController.onLogin,
           onLongPress: () => _mineController.onLogin(true),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(width: 20),
-              ClipOval(
-                child: _mineController.userInfo.value.face != null
-                    ? NetworkImgLayer(
-                        src: _mineController.userInfo.value.face,
-                        semanticsLabel: '头像',
-                        width: 55,
-                        height: 55,
-                      )
-                    : Container(
-                        width: 55,
-                        height: 55,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: theme.colorScheme.onInverseSurface,
-                        ),
-                        child: Image.asset(
-                          'assets/images/noface.jpeg',
-                          semanticLabel: "默认头像",
-                        ),
-                      ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _mineController.userInfo.value.uname ?? '点击头像登录',
-                            style: theme.textTheme.titleMedium!
-                                .copyWith(height: 1),
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 20),
+                ClipOval(
+                  child: _mineController.userInfo.value.face != null
+                      ? NetworkImgLayer(
+                          src: _mineController.userInfo.value.face,
+                          semanticsLabel: '头像',
+                          width: 55,
+                          height: 55,
+                        )
+                      : Container(
+                          width: 55,
+                          height: 55,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: theme.colorScheme.onInverseSurface,
                           ),
-                          const SizedBox(width: 4),
-                          Image.asset(
-                            'assets/images/lv/lv${_mineController.userInfo.value.isSeniorMember == 1 ? '6_s' : _mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}.png',
-                            height: 10,
-                            semanticLabel:
-                                '等级：${_mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}',
+                          child: Image.asset(
+                            'assets/images/noface.jpeg',
+                            semanticLabel: "默认头像",
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    FittedBox(
-                      child: Text.rich(
-                        TextSpan(
+                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FittedBox(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            TextSpan(
-                              text: '硬币 ',
-                              style: TextStyle(
-                                fontSize: theme.textTheme.labelSmall!.fontSize,
-                                color: theme.colorScheme.outline,
-                              ),
+                            Text(
+                              _mineController.userInfo.value.uname ?? '点击头像登录',
+                              style: theme.textTheme.titleMedium!
+                                  .copyWith(height: 1),
                             ),
-                            TextSpan(
-                              text:
-                                  (_mineController.userInfo.value.money ?? '-')
-                                      .toString(),
-                              style: TextStyle(
-                                fontSize: theme.textTheme.labelSmall!.fontSize,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "  经验 ",
-                              style: TextStyle(
-                                fontSize: theme.textTheme.labelSmall!.fontSize,
-                                color: theme.colorScheme.outline,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "${levelInfo?.currentExp ?? '-'}",
-                              semanticsLabel:
-                                  "当前${levelInfo?.currentExp ?? '-'}",
-                              style: TextStyle(
-                                fontSize: theme.textTheme.labelSmall!.fontSize,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "/${levelInfo?.nextExp ?? '-'}",
-                              semanticsLabel: "升级需${levelInfo?.nextExp ?? '-'}",
-                              style: TextStyle(
-                                fontSize: theme.textTheme.labelSmall!.fontSize,
-                                color: theme.colorScheme.outline,
-                              ),
+                            const SizedBox(width: 4),
+                            Image.asset(
+                              'assets/images/lv/lv${_mineController.userInfo.value.isSeniorMember == 1 ? '6_s' : _mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}.png',
+                              height: 10,
+                              semanticLabel:
+                                  '等级：${_mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}',
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    SizedBox(
-                      height: 2,
-                      child: LinearProgressIndicator(
-                        minHeight: 2,
-                        value: levelInfo != null
-                            ? (levelInfo.currentExp! / levelInfo.nextExp!)
-                            : 0,
-                        backgroundColor: theme.colorScheme.inversePrimary,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            theme.colorScheme.primary),
+                      const SizedBox(height: 8),
+                      FittedBox(
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '硬币 ',
+                                style: TextStyle(
+                                  fontSize: theme.textTheme.labelSmall!.fontSize,
+                                  color: theme.colorScheme.outline,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 
+                                    (_mineController.userInfo.value.money ?? '-')
+                                    .toString(),
+                                style: TextStyle(
+                                  fontSize: theme.textTheme.labelSmall!.fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "  经验 ",
+                                style: TextStyle(
+                                  fontSize: theme.textTheme.labelSmall!.fontSize,
+                                  color: theme.colorScheme.outline,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "${levelInfo?.currentExp ?? '-'}",
+                                semanticsLabel:
+                                    "当前${levelInfo?.currentExp ?? '-'}",
+                                style: TextStyle(
+                                  fontSize: theme.textTheme.labelSmall!.fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "/${levelInfo?.nextExp ?? '-'}",
+                                semanticsLabel: "升级需${levelInfo?.nextExp ?? '-'}",
+                                style: TextStyle(
+                                  fontSize: theme.textTheme.labelSmall!.fontSize,
+                                  color: theme.colorScheme.outline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        height: 2,
+                        child: LinearProgressIndicator(
+                          minHeight: 2,
+                          value: levelInfo != null
+                              ? (levelInfo.currentExp! / levelInfo.nextExp!)
+                              : 0,
+                          backgroundColor: theme.colorScheme.inversePrimary,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.primary),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 20),
-            ],
+                const SizedBox(width: 20),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),

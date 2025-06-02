@@ -12,6 +12,9 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.WindowManager.LayoutParams
+import android.content.pm.PackageManager
+import android.app.UiModeManager
+import android.content.Context
 import kotlin.system.exitProcess
 
 class MainActivity : AudioServiceActivity() {
@@ -24,6 +27,8 @@ class MainActivity : AudioServiceActivity() {
         methodChannel.setMethodCallHandler { call, result ->
             if (call.method == "back") {
                 back()
+            } else if (call.method == "isTvDevice") {
+                result.success(isTvDevice())
             } else if (call.method == "biliSendCommAntifraud") {
                 try {
                     val action = call.argument<Int>("action") ?: 0
@@ -77,6 +82,13 @@ class MainActivity : AudioServiceActivity() {
                 result.notImplemented()
             }
         }
+    }
+    
+    private fun isTvDevice(): Boolean {
+        val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        return uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION ||
+               packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) ||
+               packageManager.hasSystemFeature("android.software.leanback")
     }
 
     private fun back() {
