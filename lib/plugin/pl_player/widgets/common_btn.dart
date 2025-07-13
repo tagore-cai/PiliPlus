@@ -17,10 +17,9 @@ class ComBtn extends StatelessWidget {
     return SizedBox(
       width: 34,
       height: 34,
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
-        behavior: HitTestBehavior.opaque,
         child: icon,
       ),
     );

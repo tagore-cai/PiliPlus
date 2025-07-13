@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,22 @@ class Utils {
   static const channel = MethodChannel("PiliPlus");
 
   static bool? _isIpad;
+
+  static bool? _isTv;
+
+    /// 检测是否为TV设备
+  static Future<bool> isAndroidTv() async {
+    if (_isTv != null) return _isTv!;
+
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      final info = await deviceInfo.androidInfo;
+      _isTv = info.systemFeatures.contains("android.software.leanback");
+      return  _isTv ?? false;
+    }
+    
+    return _isTv = false;
+  }
 
   static Future<bool> isIpad() async {
     if (_isIpad != null) {

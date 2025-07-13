@@ -107,8 +107,7 @@ class _MinePageState extends State<MinePage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
+        InkWell(
           onTap: _mineController.onLogin,
           onLongPress: () => _mineController.onLogin(true),
           child: Row(
